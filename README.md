@@ -1,4 +1,4 @@
 # INSTALL AND RUN
-cd into chat-app-server.
-npm i.
-npm run dev.
+1. cd into chat-app-server
+2. npm i
+3. npm run dev
