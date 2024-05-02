@@ -10,7 +10,7 @@ export const userController = {
     try {
       const user = users.filter((user) => user.username === body.username);
       if (user.length) {
-        return response.status(500).json({
+        return response.status(403).json({
           object: {
             msg: "User already exist",
           },
