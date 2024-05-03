@@ -5,7 +5,11 @@ import { userController } from "../controller/userController";
 
 export const router = express.Router();
 
-router.post("/", validateSchema(UserPostSchema), userController.createUser);
+router.post(
+  "/register",
+  validateSchema(UserPostSchema),
+  userController.createUser
+);
 
 router.post(
   "/login",

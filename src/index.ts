@@ -1,8 +1,9 @@
 import express from "express";
 import http from "http";
+import dotenv from "dotenv";
 import { Server as SocketIOServer } from "socket.io";
 import { router as userRouter } from "./routes";
-import dotenv from "dotenv";
+import HttpException from "./midldlewares/httpException";
 
 const app = express();
 const cors = require("cors");
@@ -34,6 +35,28 @@ io.on("connection", (socket) => {
 });
 
 app.use("/api/users", userRouter);
+
+// handle internal server errors
+app.use(
+  (
+    err: Error | HttpException,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction
+  ) => {
+    // @ts-ignore
+    if (err && err.errorCode) {
+      // @ts-ignore
+      res.status(err.errorCode).json({
+        error: err.message,
+      });
+    } else if (err) {
+      res.status(500).json({
+        error: err.message,
+      });
+    }
+  }
+);
 
 server.listen(WEBSOCKET_PORT, () =>
   console.log(`Websocket running on port ${WEBSOCKET_PORT}`)

@@ -1,11 +1,15 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { comparePassword, generateId, hashPassword } from "../utils";
 import { User } from "../types";
 
 const users: User[] = [];
 
 export const userController = {
-  createUser: async (request: Request, response: Response) => {
+  createUser: async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
     const { body } = request.body;
     try {
       const user = users.filter((user) => user.username === body.username);
@@ -31,14 +35,14 @@ export const userController = {
         },
       });
     } catch (error) {
-      return response.status(500).json({
-        object: {
-          msg: error,
-        },
-      });
+      next(error);
     }
   },
-  userLogin: async (request: Request, response: Response) => {
+  userLogin: async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
     try {
       const { body } = request.body;
       const { username, password } = body;
@@ -62,7 +66,6 @@ export const userController = {
           },
         });
       }
-
       return response.status(200).json({
         object: {
           username: user.username,
@@ -71,11 +74,7 @@ export const userController = {
         },
       });
     } catch (error) {
-      return response.status(500).json({
-        object: {
-          msg: error,
-        },
-      });
+      next(error);
     }
   },
 };
