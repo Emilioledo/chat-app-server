@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { Server as SocketIOServer } from "socket.io";
 import { router as userRouter } from "./routes";
 import HttpException from "./midldlewares/httpException";
+import { connectDB } from "./database/db";
 
 const app = express();
 const cors = require("cors");
@@ -33,6 +34,9 @@ io.on("connection", (socket) => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
+
+//db connection
+connectDB();
 
 // routes
 app.use("/api/users", userRouter);

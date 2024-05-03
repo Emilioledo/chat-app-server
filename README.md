@@ -1,3 +1,4 @@
+````markdown
 # Chat App Server
 
 This is a simple Express.js application for a chat server.
@@ -9,6 +10,7 @@ This is a simple Express.js application for a chat server.
    ```bash
    cd chat-app-server
    ```
+````
 
 2. Install the necessary dependencies using npm.
 
@@ -23,7 +25,13 @@ This is a simple Express.js application for a chat server.
 
 ## About
 
-This application is built with Express.js, providing a simple chat server that can be used for various purposes.
+This application is built with Express.js, providing a simple chat server that can be used for various purposes. It also includes a WebSocket for real-time communication.
+
+To run the database, use Docker Compose:
+
+```bash
+docker-compose up
+```
 
 ## License
 
@@ -32,3 +40,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Author
 
 Emilio Fernandez Ledo
+
+```
+This updated README now includes information about the WebSocket and how to run the database with Docker Compose.
+```

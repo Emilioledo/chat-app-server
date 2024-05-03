@@ -5,9 +5,7 @@ import {
   generateId,
   hashPassword,
 } from "../utils";
-import { User } from "../types";
-
-const users: User[] = [];
+import UserModel from "../model/User.model";
 
 export const userController = {
   createUser: async (
@@ -15,10 +13,16 @@ export const userController = {
     response: Response,
     next: NextFunction
   ) => {
-    const { body } = request.body;
     try {
-      const user = users.filter((user) => user.username === body.username);
-      if (user.length) {
+      const { body } = request.body;
+      const { email, password } = body;
+      await UserModel.sync();
+      const user = await UserModel.findOne({
+        where: {
+          email,
+        },
+      });
+      if (user) {
         return response.status(403).json({
           object: {
             msg: "User already exist",
@@ -28,10 +32,10 @@ export const userController = {
       const newUser = {
         id: generateId(),
         ...body,
-        password: await hashPassword(body.password, 10),
+        password: await hashPassword(password, 10),
         createdAt: new Date(),
       };
-      users.push(newUser);
+      UserModel.create(newUser);
 
       return response.status(200).json({
         object: {
@@ -50,9 +54,14 @@ export const userController = {
   ) => {
     try {
       const { body } = request.body;
-      const { username, password } = body;
+      const { email, password } = body;
+      await UserModel.sync();
 
-      const user = users.find((user) => user.username === username) as User;
+      const user = await UserModel.findOne({
+        where: {
+          email,
+        },
+      });
 
       if (!user) {
         return response.status(401).json({
@@ -62,7 +71,12 @@ export const userController = {
         });
       }
 
-      const isValidPassword = await comparePassword(password, user.password);
+      const encryptedPassword = user.getDataValue("password");
+
+      const isValidPassword = await comparePassword(
+        password,
+        encryptedPassword
+      );
 
       if (!isValidPassword) {
         return response.status(401).json({
@@ -74,9 +88,11 @@ export const userController = {
 
       const token = createToken(user);
 
+      const username = user.getDataValue("username");
+
       return response.status(200).json({
         object: {
-          username: user.username,
+          username: username,
           msg: "User logged successfully",
           token,
         },
