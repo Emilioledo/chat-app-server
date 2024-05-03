@@ -7,7 +7,10 @@ export const UserPostSchema = yup.object({
       .string()
       .min(8)
       .max(16)
-      .matches(/^[a-zA-Z0-9]+$/)
+      .matches(
+        /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/,
+        "The password must contain at least one letter and at least one number."
+      )
       .required(),
   }),
 });
@@ -19,7 +22,10 @@ export const UserLoginSchema = yup.object({
       .string()
       .min(8)
       .max(16)
-      .matches(/^[a-zA-Z0-9]+$/)
+      .matches(
+        /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/,
+        "The password must contain at least one letter and at least one number."
+      )
       .required(),
   }),
 });
