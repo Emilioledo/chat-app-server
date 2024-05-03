@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { comparePassword, generateId, hashPassword } from "../utils";
+import {
+  comparePassword,
+  createToken,
+  generateId,
+  hashPassword,
+} from "../utils";
 import { User } from "../types";
 
 const users: User[] = [];
@@ -47,7 +52,7 @@ export const userController = {
       const { body } = request.body;
       const { username, password } = body;
 
-      const user = users.find((user) => user.username === username);
+      const user = users.find((user) => user.username === username) as User;
 
       if (!user) {
         return response.status(401).json({
@@ -66,11 +71,14 @@ export const userController = {
           },
         });
       }
+
+      const token = createToken(user);
+
       return response.status(200).json({
         object: {
           username: user.username,
           msg: "User logged successfully",
-          isLogged: true,
+          token,
         },
       });
     } catch (error) {

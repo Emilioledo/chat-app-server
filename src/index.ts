@@ -34,6 +34,7 @@ io.on("connection", (socket) => {
   });
 });
 
+// routes
 app.use("/api/users", userRouter);
 
 // handle internal server errors
