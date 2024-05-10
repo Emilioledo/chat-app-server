@@ -22,6 +22,10 @@ UserModel.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
   },
   {
     sequelize,

@@ -14,8 +14,7 @@ export const userController = {
     next: NextFunction
   ) => {
     try {
-      const { body } = request.body;
-      const { email, password } = body;
+      const { email, password, username } = request.body;
       await UserModel.sync();
       const user = await UserModel.findOne({
         where: {
@@ -31,7 +30,8 @@ export const userController = {
       }
       const newUser = {
         id: generateId(),
-        ...body,
+        email,
+        username,
         password: await hashPassword(password, 10),
         createdAt: new Date(),
       };
@@ -53,8 +53,7 @@ export const userController = {
     next: NextFunction
   ) => {
     try {
-      const { body } = request.body;
-      const { email, password } = body;
+      const { email, password } = request.body;
       await UserModel.sync();
 
       const user = await UserModel.findOne({
@@ -96,6 +95,39 @@ export const userController = {
           msg: "User logged successfully",
           token,
         },
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  deleteUser: async (
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = request.params;
+      if (!id)
+        return response.status(422).json({
+          msg: "No token provided",
+        });
+      await UserModel.sync();
+      const user = await UserModel.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!user)
+        return response.status(404).json({
+          msg: "User does not exist",
+        });
+
+      await user?.update({ ...user, isDeleted: true });
+      await user?.save();
+
+      return response.status(200).json({
+        user,
       });
     } catch (error) {
       next(error);
